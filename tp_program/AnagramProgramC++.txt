@@ -1,0 +1,45 @@
+
+#include <iostream>
+
+using namespace std;
+
+void calChar(string s, int a[]){
+    for(int i=0; i<s.length();i++)
+    {
+        int temp=s[i]-97;
+        a[temp]++;
+    }
+}
+
+void checkChar(string s1, int a[])
+{
+    int i;
+    for(i=0;i<s1.length();i++)
+    {
+        int temp=s1[i]-97;
+        a[temp]--;
+        if(a[temp]<0)
+        {
+            cout<<"It is not an anagram.";
+            break;
+        }
+    }
+    if(i==s1.length())
+    {
+        cout<<"It is an anagram.";
+    }
+}
+
+
+int main()
+{
+    string str1,str2;
+    int a[26]={0};
+    cout<<"Enter the first anagram words: ";
+    cin>>str1;
+    cout<<"Enter the second anagram words: ";
+    cin>>str2;
+    calChar(str1, a);
+    checkChar(str2,a);
+    return 0; 
+}

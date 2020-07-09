@@ -1,0 +1,123 @@
+#include <iostream>
+using namespace std;
+
+class Element{
+    public:
+        int r;
+        int c;
+        int ele;
+};
+
+class Sparse{
+    private:
+        int row;
+        int col;
+        int num;
+        Element *element;
+    public:
+        Sparse (int row,int col,int num)
+        {
+            this->row=row;
+            this->col=col;
+            this->num=num;
+            element=new Element[this->num];
+        }
+        ~Sparse()
+        {
+            delete[] element;
+        }
+        Sparse operator+(Sparse &s);
+        friend istream & operator>>(istream &is,Sparse &s);
+        friend ostream & operator<<(ostream &os,Sparse &s);
+};
+
+istream & operator>>(istream &is,Sparse &s)
+{
+   /* cout<<"Enter the size of matrix row col: ";
+    cin>>s.row>>s.col;
+    cout<<"Also number of non zero element: ";
+    cin>>s.num;
+    s.element=new Element [s.num];*/
+    cout<<"Enter the elements of the matrix: ";
+    for(int i=0;i<s.num;i++)
+    {
+        cout<<"Enter the row of the elements: ";
+        cin>>s.element[i].r;
+        cout<<"Enter the col of the elements: ";
+        cin>>s.element[i].c;
+        cout<<"Enter the element: ";
+        cin>>s.element[i].ele;
+    }
+    return is;
+}
+
+ostream & operator<<(ostream &os,Sparse &s)
+{
+    int k=0;
+    for(int i=0;i<s.row;i++)
+    {
+        for(int j=0;j<s.col;j++)
+        {
+            if(i==s.element[k].r && j==s.element[k].c)
+            {
+                cout<<s.element[k++].ele<<" ";
+            }
+            else 
+                cout<<"0 ";
+        }
+        cout<<"\n";
+    }
+    return os;
+}
+
+Sparse Sparse::operator+(Sparse &s2)
+{
+    Sparse *s3=new Sparse(row,col,num+s2.num);
+    
+  //  s3.element=new Element[s1.num+s2.num];
+    int i=0,j=0,k=0;
+    while(i!=num || j!=s2.num)
+    {
+        if(element[i].r < s2.element[j].r)
+            s3->element[k++]=element[i++];
+        else if(element[i].r > s2.element[j].r)
+            s3->element[k++]=s2.element[j++];
+        else
+            {
+                if(element[i].c < s2.element[j].c)
+                    s3->element[k++]=element[i++];
+                else if(element[i].c > s2.element[j].c)
+                    s3->element[k++]=s2.element[j++];
+                else
+                    {
+                        s3->element[k]=s2.element[j];
+                        s3->element[k++].ele=s2.element[j++].ele + element[i++].ele;
+                    }    
+            }
+    }  
+    for(;i<num;i++)
+        s3->element[k++]=element[i];
+    for(;j<s2.num;j++)
+       s3->element[k++]=s2.element[j];
+    s3->row=s2.row;
+    s3->col=s2.col;
+    s3->num=k;
+    return *s3;
+}
+
+int main()
+{
+    Sparse s1(5,5,5);
+    Sparse s2(5,5,5);
+    
+    cin>>s1;
+    cin>>s2;
+    
+    Sparse result= s1+s2;
+    
+    cout<<"First Matrix:  "<<endl<<s1;
+    cout<<"Second Matrix:  "<<endl<<s2;
+    cout<<"\n\n";
+    cout<<"Result Matrix:  "<<endl<<result;
+    return 0;
+}
